@@ -65,13 +65,14 @@ agregateTwoSortedRankings <- function(dd, firstColumnName, secondColumnName) {
 # }
 
 
-fileNameData <- "../data/hcvdat0_EDITED_cirrhosis.csv"
-targetName <- "category_0hepatitisC_1cirrhosis"
-MISSING_DATA_IMPUTATION <- TRUE
 
-# fileNameData <- "../data/journal.pone.0118297_S1_Dataset_HPV_EDITED_cirrhosis.csv"
-# targetName <- "cirrhosis"
+# fileNameData <- "../data/hcvdat0_EDITED_fibrosis_cirrhosis.csv"
+# targetName <- "category_0fibrosis_1cirrhosis"
 # MISSING_DATA_IMPUTATION <- TRUE
+
+fileNameData <- "../data/journal.pone.0118297_S1_Dataset_HPV_EDITED_cirrhosis.csv"
+targetName <- "cirrhosis"
+MISSING_DATA_IMPUTATION <- TRUE
 
 list.of.packages <- c("easypackages", "randomForest", "ggplot2", "dplyr", "mice")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
@@ -82,7 +83,7 @@ libraries(list.of.packages)
 source("./confusion_matrix_rates.r")
 source("./utils.r")
 
-FEATURE_RANKING_PLOT_DEPICTION <- TRUE
+FEATURE_RANKING_PLOT_DEPICTION <-  FALSE
 TWO_FEATURES_PLOT <- FALSE
 
 patients_data <- read.csv(fileNameData, header = TRUE, sep =",");
