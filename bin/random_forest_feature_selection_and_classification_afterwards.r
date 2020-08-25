@@ -66,13 +66,13 @@ agregateTwoSortedRankings <- function(dd, firstColumnName, secondColumnName) {
 
 
 
-fileNameData <- "../data/hcvdat0_EDITED_fibrosis_cirrhosis.csv"
-targetName <- "category_0fibrosis_1cirrhosis"
-MISSING_DATA_IMPUTATION <- TRUE
-
-# fileNameData <- "../data/journal.pone.0118297_S1_Dataset_HPV_EDITED_cirrhosis.csv"
-# targetName <- "cirrhosis"
+# fileNameData <- "../data/hcvdat0_EDITED.csv"
+# targetName <- "category_0healthy_1sick"
 # MISSING_DATA_IMPUTATION <- TRUE
+
+fileNameData <- "../data/journal.pone.0118297_S1_Dataset_HPV_EDITED_cirrhosis.csv"
+targetName <- "cirrhosis"
+MISSING_DATA_IMPUTATION <- TRUE
 
 list.of.packages <- c("easypackages", "randomForest", "ggplot2", "dplyr", "mice")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
@@ -89,6 +89,8 @@ TWO_FEATURES_PLOT <- FALSE
 
 patients_data <- read.csv(fileNameData, header = TRUE, sep =",");
 cat("Read data from file ", fileNameData, "\n", sep="")
+
+patients_data$"category_0healthy_1hepatitis_2fibrosis_3cirrhorsis" <- NULL
 
 # rename target
 names(patients_data)[names(patients_data) == targetName] <- "target"
@@ -109,8 +111,10 @@ if(MISSING_DATA_IMPUTATION==TRUE){
     patients_data <- complete(imputed_data, NUM_DATASETS)
 }
 
+patients_data <- patients_data[sample(nrow(patients_data)),] # shuffle the rows
 
-TRAINING_SET_RATIO <- 0.95
+
+TRAINING_SET_RATIO <- 0.8
 TEST_SET_RATIO <- 1 - TRAINING_SET_RATIO
 
 patients_training_set_index_start <- 1
@@ -134,7 +138,7 @@ allExecutionsFinalRanking <- data.frame(Doubles=double(),
                  Characters=character(),
                  stringsAsFactors=FALSE)
 
-execution_number <- 100 
+execution_number <- 100
 cat("Number of executions = ", execution_number, "\n", sep="")
 for(exe_i in 1:execution_number)
 {

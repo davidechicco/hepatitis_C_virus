@@ -1,7 +1,7 @@
 options(stringsAsFactors = FALSE)
 # library("clusterSim")
 
-list.of.packages <- c("easypackages", "PRROC", "e1071", "Metrics", "MLmetrics", "rcompanion", "irr")
+list.of.packages <- c("easypackages", "PRROC", "e1071", "Metrics", "MLmetrics", "rcompanion")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -11,17 +11,8 @@ libraries(new.packages)
 # cat("script_dir: ", script_dir, "\n", sep="")
 source("utils.r")
 
+threshold <- 0.5
 
-# Brier score
-Cohen_Kappa_function <- function(actual_labels, predicted_values) 
-{
-    ground_and_pred <- data.frame(actual_labels = as.numeric(actual_labels), predicted_values = as.numeric(predicted_values))
-    library("irr")
-    thisCohenKappa <- kappa2(ground_and_pred)
-    cat("Cohen's kappa = ", dec_three(thisCohenKappa$value), " (worst value: -1; best value: +1)\n")
-
-    return(thisCohenKappa)
-}
 
 # Brier score
 Brier_score_function <- function(actual_labels, predicted_values) 
@@ -70,6 +61,7 @@ confusion_matrix_rates <- function (actual_labels, predicted_values, keyword)
     fg_test <- predicted_values[actual_labels==1]
     bg_test <- predicted_values[actual_labels==0]
 
+    library("PRROC")
     pr_curve_test <- pr.curve(scores.class0 = fg_test, scores.class1 = bg_test, curve = F)
     # plot(pr_curve_test)
     # print(pr_curve_test)
@@ -84,11 +76,11 @@ confusion_matrix_rates <- function (actual_labels, predicted_values, keyword)
     cat("ROC AUC \t\t", roc_auc, "\n\n", sep="")
 
     theBrierScore <- Brier_score_function(actual_labels, predicted_values)
-    theCohenKappa <- Cohen_Kappa_function(actual_labels, predicted_values)
+
     
-    library("rcompanion")
-    theCramerV <- cramerV(actual_labels, predicted_values)
-    cat("Cramer's V = ", dec_three(theCramerV[[1]]), " (worst value: 0; best value: 1)\n",  sep="")
+    # library("rcompanion")
+    # theCramerV <- cramerV(actual_labels, predicted_values)
+    # cat("Cramer's V = ", dec_three(theCramerV[[1]]), " (worst value: 0; best value: 1)\n",  sep="")
 
     predicted_values_binary <- as.numeric(predicted_values)
     predicted_values_binary[predicted_values_binary>=threshold]=1
@@ -124,6 +116,14 @@ confusion_matrix_rates <- function (actual_labels, predicted_values, keyword)
   balanced_accuracy <- 0.5*(recall+specificity)
   PPV <-  TP /(TP+FP)
   NPV <- TN /(TN+FN)
+  
+     
+    kappa_upper <- 2*(TP*TN - FP*FN)
+    kappa_lower <- (TP + FP )*(FP + TN) + (TP + FN )*(FN + TN)
+    theCohenKappa <- kappa_upper / kappa_lower
+    
+    cat("Cohen's Kappa =  ", dec_three(theCohenKappa), "\n", sep="")
+  
   
   cat("\n\n",keyword,"\tMCC \t F1_score \taccuracy \tTP_rate \tTN_rate \tPPV \t\tNPV \t\tPR AUC \tROC AUC\n")
   cat(keyword,"      ", sep="")
