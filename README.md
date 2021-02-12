@@ -16,5 +16,10 @@ Instructions for regression:
 
 `Rscript random_forest_regression.r`
 
+## Article
+Additional information about this project is available in the following peer-reviewed published article:
+
+> Davide Chicco, Giuseppe Jurman. "[An ensemble learning approach for enhanced classification of patients with hepatitis and cirrhosis](https://doi.org/10.1109/ACCESS.2021.3057196)". IEEE Access, vol. 9, pages 24485-24498, February 2021. 
+
 ## Contact
 Contact: davidechicco(AT)davidechicco.it
